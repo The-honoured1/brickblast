@@ -11,6 +11,7 @@ class GameState extends ChangeNotifier {
   int _currentLevel = 1;
   PowerupType? _activePowerup;
   double _powerupTimeRemaining = 0;
+  bool _isDarkMode = false;
 
   int get score => _score;
   int get highScore => _highScore;
@@ -20,6 +21,7 @@ class GameState extends ChangeNotifier {
   int get currentLevel => _currentLevel;
   PowerupType? get activePowerup => _activePowerup;
   double get powerupTimeRemaining => _powerupTimeRemaining;
+  bool get isDarkMode => _isDarkMode;
 
   GameState() {
     _loadState();
@@ -30,6 +32,13 @@ class GameState extends ChangeNotifier {
     _highScore = prefs.getInt('highScore') ?? 0;
     _coins = prefs.getInt('coins') ?? 0;
     _currentLevel = prefs.getInt('currentLevel') ?? 1;
+    _isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    notifyListeners();
+  }
+
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    SharedPreferences.getInstance().then((prefs) => prefs.setBool('isDarkMode', _isDarkMode));
     notifyListeners();
   }
 

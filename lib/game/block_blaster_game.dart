@@ -159,23 +159,37 @@ class BlockBlasterGame extends FlameGame with HasCollisionDetection, TapCallback
 
   @override
   Color backgroundColor() {
+    final isDark = gameState.isDarkMode;
     // Determine world index (0 to 5)
     int worldIndex = (gameState.currentLevel - 1) ~/ 10;
     
-    // Light base color per world (Zen style)
+    // Light/Dark base color per world (Zen style)
     Color baseColor;
-    switch (worldIndex % 6) {
-      case 0: baseColor = const Color(0xFFF2F9F2); break; // Jungle Light
-      case 1: baseColor = const Color(0xFFF2F2F9); break; // Space Light
-      case 2: baseColor = const Color(0xFFF2F9F9); break; // Underwater Light
-      case 3: baseColor = const Color(0xFFF9F2F2); break; // Volcano Light
-      case 4: baseColor = const Color(0xFFF9F9FF); break; // Ice Light
-      case 5: baseColor = const Color(0xFFF9F5F9); break; // NeonCity Light
-      default: baseColor = const Color(0xFFF9F9F9);
+    if (!isDark) {
+      switch (worldIndex % 6) {
+        case 0: baseColor = const Color(0xFFF2F9F2); break; // Jungle Light
+        case 1: baseColor = const Color(0xFFF2F2F9); break; // Space Light
+        case 2: baseColor = const Color(0xFFF2F9F9); break; // Underwater Light
+        case 3: baseColor = const Color(0xFFF9F2F2); break; // Volcano Light
+        case 4: baseColor = const Color(0xFFF9F9FF); break; // Ice Light
+        case 5: baseColor = const Color(0xFFF9F5F9); break; // NeonCity Light
+        default: baseColor = const Color(0xFFF9F9F9);
+      }
+    } else {
+      switch (worldIndex % 6) {
+        case 0: baseColor = const Color(0xFF142014); break; // Jungle Dark
+        case 1: baseColor = const Color(0xFF141420); break; // Space Dark
+        case 2: baseColor = const Color(0xFF142020); break; // Underwater Dark
+        case 3: baseColor = const Color(0xFF201414); break; // Volcano Dark
+        case 4: baseColor = const Color(0xFF14141A); break; // Ice Dark
+        case 5: baseColor = const Color(0xFF1A141A); break; // NeonCity Dark
+        default: baseColor = const Color(0xFF1A1A1A);
+      }
     }
 
     double warmth = (gameState.combo / 20).clamp(0.0, 1.0);
-    return Color.lerp(baseColor, const Color(0xFFF9EBEB), warmth)!;
+    final lerpTarget = isDark ? const Color(0xFF2D1A1A) : const Color(0xFFF9EBEB);
+    return Color.lerp(baseColor, lerpTarget, warmth)!;
   }
 
   void playSfx(String name) {

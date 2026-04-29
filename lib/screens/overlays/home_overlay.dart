@@ -35,9 +35,10 @@ class _HomeOverlayState extends State<HomeOverlay>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = widget.game.gameState.isDarkMode;
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFFF9F9F9), // Light Zen background
+      decoration: BoxDecoration(
+        color: AppColors.background(isDark), 
       ),
       child: SafeArea(
         child: Column(
@@ -120,6 +121,7 @@ class _HomeOverlayState extends State<HomeOverlay>
   }
 
   Widget _buildMenuButtons() {
+    final isDark = widget.game.gameState.isDarkMode;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -127,21 +129,22 @@ class _HomeOverlayState extends State<HomeOverlay>
         const SizedBox(width: 16),
         _menuButton('LEVELS', const Color(0xFF05D9E8), Icons.grid_view_rounded),
         const SizedBox(width: 16),
-        _menuButton('SHOP', const Color(0xFF00E676), Icons.shopping_bag_rounded),
+        _menuButton('THEME', isDark ? Colors.amber : Colors.indigo, isDark ? Icons.light_mode : Icons.dark_mode, onTap: widget.game.gameState.toggleTheme),
       ],
     );
   }
 
-  Widget _menuButton(String label, Color color, IconData icon) {
+  Widget _menuButton(String label, Color color, IconData icon, {VoidCallback? onTap}) {
+    final isDark = widget.game.gameState.isDarkMode;
     return GestureDetector(
-      onTap: () {}, // TODO: navigate to section
+      onTap: onTap ?? () {}, 
       child: Container(
         width: 90,
         height: 90,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF222222) : Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black, width: 2),
+          border: Border.all(color: AppColors.border(isDark), width: 2),
           boxShadow: [
             BoxShadow(color: Colors.black.withOpacity(0.1), offset: const Offset(0, 4)),
           ],
