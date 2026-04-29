@@ -37,7 +37,7 @@ class _HomeOverlayState extends State<HomeOverlay>
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Color(0xFF0A0A0A), // Solid dark background
+        color: Color(0xFFF9F9F9), // Light Zen background
       ),
       child: SafeArea(
         child: Column(
@@ -95,13 +95,13 @@ class _HomeOverlayState extends State<HomeOverlay>
       scale: _pulseAnim,
       child: GestureDetector(
         onTap: _startGame,
-        child: Container(
-          width: 200,
-          height: 60,
             color: const Color(0xFFFF2D78),
             borderRadius: BorderRadius.circular(12),
             border: const Border(
-              bottom: BorderSide(color: Color(0xFF880E4F), width: 6),
+              bottom: BorderSide(color: Colors.black, width: 4),
+              left: BorderSide(color: Colors.black, width: 2),
+              right: BorderSide(color: Colors.black, width: 2),
+              top: BorderSide(color: Colors.black, width: 2),
             ),
           ),
           alignment: Alignment.center,
@@ -139,9 +139,12 @@ class _HomeOverlayState extends State<HomeOverlay>
         width: 90,
         height: 90,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.05),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3), width: 2),
+          border: Border.all(color: Colors.black, width: 2),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.1), offset: const Offset(0, 4)),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

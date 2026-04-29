@@ -61,7 +61,7 @@ class HudOverlay extends StatelessWidget {
           style: GoogleFonts.rajdhani(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            color: Colors.white38,
+            color: Colors.black38,
             letterSpacing: 2,
           ),
         ),
@@ -70,7 +70,7 @@ class HudOverlay extends StatelessWidget {
           style: GoogleFonts.rajdhani(
             fontSize: 28,
             fontWeight: FontWeight.w900,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         Text(

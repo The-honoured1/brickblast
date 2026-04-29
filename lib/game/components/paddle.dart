@@ -41,21 +41,21 @@ class Paddle extends PositionComponent
     _hitbox = RectangleHitbox();
     add(_hitbox);
 
-    _depthPaint = Paint()..color = const Color(0x66000000);
+    _depthPaint = Paint()..color = const Color(0xFF000000);
     _bodyPaint = Paint()..color = const Color(0xFF05D9E8);
     _accentPaint = Paint()
-      ..color = const Color(0x4DFFFFFF)
+      ..color = const Color(0xFF000000)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+      ..strokeWidth = 3;
     
     _updateShapes();
   }
 
   void _updateShapes() {
-    _rrect = RRect.fromRectAndRadius(size.toRect(), const Radius.circular(4));
+    _rrect = RRect.fromRectAndRadius(size.toRect(), const Radius.circular(8));
     _depthRRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 4, size.x, size.y),
-      const Radius.circular(4),
+      Rect.fromLTWH(0, 5, size.x, size.y),
+      const Radius.circular(8),
     );
   }
 
@@ -145,7 +145,7 @@ class Paddle extends PositionComponent
 
     canvas.drawRRect(_depthRRect, _depthPaint);
     canvas.drawRRect(_rrect, _bodyPaint);
-    canvas.drawLine(const Offset(8, 4), Offset(size.x - 8, 4), _accentPaint);
+    canvas.drawRRect(_rrect, _accentPaint); // Draw the bold outline
   }
 
   @override

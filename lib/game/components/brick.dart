@@ -56,21 +56,17 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
       _opacity = 0.0;
     }
 
-    _depthPaint = Paint()..color = const Color(0x4D000000);
+    _depthPaint = Paint()..color = const Color(0xFF000000); // Solid black for depth/outline
     _facePaint = Paint()..color = type.color;
-    _highlightPaint = Paint()
-      ..color = const Color(0x33FFFFFF)
+    _highlightPaint = Paint() // Actually will use this for the border/outline now
+      ..color = const Color(0xFF000000)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    _crackPaint = Paint()
-      ..color = const Color(0x80000000)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
+      ..strokeWidth = 2.0;
 
-    _rrect = RRect.fromRectAndRadius(size.toRect(), const Radius.circular(2));
+    _rrect = RRect.fromRectAndRadius(size.toRect(), const Radius.circular(6));
     _depthRRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 2, size.x, size.y),
-      const Radius.circular(2),
+      Rect.fromLTWH(0, 3, size.x, size.y), // Shifted down for flat depth
+      const Radius.circular(6),
     );
   }
 
@@ -124,9 +120,9 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
 
     canvas.drawRRect(_depthRRect, _depthPaint);
     canvas.drawRRect(_rrect, _facePaint);
-    canvas.drawLine(const Offset(2, 2), Offset(size.x - 2, 2), _highlightPaint);
+    canvas.drawRRect(_rrect, _highlightPaint); // Drawing the black outline
     
-    // Draw crack lines if damaged
+    // Internal "white" shine removed as per user request to remove "shining"
     if (type == BrickType.tough && health < type.hitPoints) {
       canvas.drawLine(Offset(size.x * 0.2, size.y * 0.2), Offset(size.x * 0.5, size.y * 0.8), _crackPaint);
       if (health == 1) {

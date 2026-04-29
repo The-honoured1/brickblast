@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Backgrounds
-  static const Color background = Color(0xFF0F0F0F); // Very dark, punchy background
-  static const Color gridBackground = Color(0xFF1A1A1A); // Slightly lighter for grid base
-  static const Color emptyCell = Color(0xFF232323); // Empty spot
+  static const Color background = Color(0xFFF9F9F9); // Clean, Zen background (NYT style)
+  static const Color gridBackground = Color(0xFFECECEC); 
+  static const Color emptyCell = Color(0xFFF0F0F0); 
 
   // Vibrant, shocking Block Colors (Flat design)
   static const Color neonPink = Color(0xFFFF2A6D);
@@ -24,6 +24,6 @@ class AppColors {
   ];
 
   // Text / UI
-  static const Color textPrimary = Color(0xFFF9F9F9);
-  static const Color border = Color(0xFF333333);
+  static const Color textPrimary = Color(0xFF121212); // Dark text for light background
+  static const Color border = Color(0xFF000000); // Sharp black borders
 }
