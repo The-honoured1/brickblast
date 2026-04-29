@@ -11,6 +11,9 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
   Vector2 velocity = Vector2.zero();
   double speed = 400.0;
   
+  // Cached trail paints
+  final List<Paint> _trailPaints = List.generate(8, (i) => Paint());
+
   Ball({required double radius}) : super(radius: radius);
 
   bool get isFireball => gameRef.gameState.activePowerup == PowerupType.fireball;
@@ -41,10 +44,11 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
     // Trail juice based on combo
     int combo = gameRef.gameState.combo;
     if (combo > 2) {
+      final baseTrailColor = paint.color;
       for (int i = 1; i <= min(combo, 8); i++) {
-        // Use more solid, shrinking circles for the trail
-        final trailPaint = Paint()
-          ..color = paint.color.withOpacity(0.4 - (i * 0.04).clamp(0, 0.4));
+        final trailPaint = _trailPaints[i - 1]
+          ..color = baseTrailColor.withOpacity(0.4 - (i * 0.04).clamp(0, 0.4));
+        
         canvas.drawCircle(
           Offset(-velocity.x * (i * 0.004), -velocity.y * (i * 0.004)), 
           radius * (1.0 - (i * 0.1)).clamp(0.1, 1.0), 

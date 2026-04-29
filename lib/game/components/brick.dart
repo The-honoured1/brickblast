@@ -11,12 +11,15 @@ import 'dart:math' as math;
 class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
   final BrickType type;
   late int health;
-  late final RectangleHitbox _hitbox;
-  
-  // Special brick state
-  double _bombTimer = 3.0;
-  TextComponent? _bombText;
   double _opacity = 1.0;
+  
+  // Cached Paints and Shapes
+  late final Paint _depthPaint;
+  late final Paint _facePaint;
+  late final Paint _highlightPaint;
+  late Paint _crackPaint;
+  late RRect _rrect;
+  late RRect _depthRRect;
 
   Brick({
     required Vector2 position,
@@ -52,6 +55,23 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
     if (type == BrickType.ghost) {
       _opacity = 0.0;
     }
+
+    _depthPaint = Paint()..color = const Color(0x4D000000);
+    _facePaint = Paint()..color = type.color;
+    _highlightPaint = Paint()
+      ..color = const Color(0x33FFFFFF)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    _crackPaint = Paint()
+      ..color = const Color(0x80000000)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    _rrect = RRect.fromRectAndRadius(size.toRect(), const Radius.circular(2));
+    _depthRRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 2, size.x, size.y),
+      const Radius.circular(2),
+    );
   }
 
   @override
@@ -94,49 +114,23 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
   @override
   void render(Canvas canvas) {
     // Dynamic styling based on health/type
-    Color brickColor = type.color;
     if (type == BrickType.tough && health < type.hitPoints) {
-      // Darken slightly as it gets damaged
-      brickColor = brickColor.withOpacity((0.5 + (0.5 * (health / type.hitPoints))).clamp(0.0, 1.0));
+      _facePaint.color = type.color.withOpacity((0.5 + (0.5 * (health / type.hitPoints))).clamp(0.0, 1.0));
+    } else if (type == BrickType.ghost) {
+      _facePaint.color = type.color.withOpacity(_opacity);
+    } else {
+      _facePaint.color = type.color;
     }
 
-    if (type == BrickType.ghost) {
-      brickColor = brickColor.withOpacity(_opacity);
-    }
-
-    final RRect rrect = RRect.fromRectAndRadius(
-      size.toRect(),
-      const Radius.circular(2),
-    );
-    
-    // Flat depth: Draw a darker bottom layer
-    final depthOffset = Vector2(0, 3).toOffset();
-    final depthRRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 2, size.x, size.y),
-      const Radius.circular(2),
-    );
-    canvas.drawRRect(depthRRect, Paint()..color = Colors.black.withOpacity(0.3));
-    
-    // Main brick face
-    canvas.drawRRect(rrect, Paint()..color = brickColor);
-    
-    // Top highlight line for extra "flat" pop
-    final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.2)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    canvas.drawLine(const Offset(2, 2), Offset(size.x - 2, 2), highlightPaint);
+    canvas.drawRRect(_depthRRect, _depthPaint);
+    canvas.drawRRect(_rrect, _facePaint);
+    canvas.drawLine(const Offset(2, 2), Offset(size.x - 2, 2), _highlightPaint);
     
     // Draw crack lines if damaged
     if (type == BrickType.tough && health < type.hitPoints) {
-      final paint = Paint()
-        ..color = Colors.black.withOpacity(0.5)
-        ..strokeWidth = 2
-        ..style = PaintingStyle.stroke;
-      
-      canvas.drawLine(Offset(size.x * 0.2, size.y * 0.2), Offset(size.x * 0.5, size.y * 0.8), paint);
+      canvas.drawLine(Offset(size.x * 0.2, size.y * 0.2), Offset(size.x * 0.5, size.y * 0.8), _crackPaint);
       if (health == 1) {
-        canvas.drawLine(Offset(size.x * 0.8, size.y * 0.1), Offset(size.x * 0.4, size.y * 0.9), paint);
+        canvas.drawLine(Offset(size.x * 0.8, size.y * 0.1), Offset(size.x * 0.4, size.y * 0.9), _crackPaint);
       }
     }
   }

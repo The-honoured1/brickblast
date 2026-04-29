@@ -14,9 +14,15 @@ class Paddle extends PositionComponent
   final double baseWidth = 100.0;
   
   // Powerup state track
-  PowerupType? _lastPowerup;
-  double _laserTimer = 0.0;
   Ball? _stuckBall;
+
+  // Cached Paints and Shapes
+  late final Paint _depthPaint;
+  late final Paint _bodyPaint;
+  late final Paint _accentPaint;
+  late RRect _rrect;
+  late RRect _depthRRect;
+
   Paddle({required Vector2 size}) : super(size: size);
 
   bool get isWide => gameRef.gameState.activePowerup == PowerupType.widePaddle;
@@ -34,6 +40,23 @@ class Paddle extends PositionComponent
 
     _hitbox = RectangleHitbox();
     add(_hitbox);
+
+    _depthPaint = Paint()..color = const Color(0x66000000);
+    _bodyPaint = Paint()..color = const Color(0xFF05D9E8);
+    _accentPaint = Paint()
+      ..color = const Color(0x4DFFFFFF)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    
+    _updateShapes();
+  }
+
+  void _updateShapes() {
+    _rrect = RRect.fromRectAndRadius(size.toRect(), const Radius.circular(4));
+    _depthRRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 4, size.x, size.y),
+      const Radius.circular(4),
+    );
   }
 
   @override
@@ -45,7 +68,11 @@ class Paddle extends PositionComponent
     if (isShrunk) targetWidth = baseWidth * 0.5;
     
     // Smooth size tween
+    double oldWidth = size.x;
     size.x += (targetWidth - size.x) * 10 * dt;
+    if ((size.x - oldWidth).abs() > 0.1) {
+      _updateShapes();
+    }
 
     // Shield spawn
     if (gameRef.gameState.activePowerup == PowerupType.shield && _lastPowerup != PowerupType.shield) {
@@ -109,34 +136,16 @@ class Paddle extends PositionComponent
 
   @override
   void render(Canvas canvas) {
-    Color paddleColor = const Color(0xFF05D9E8); // Base color
-    
     // Apply powerup color glow if active
     if (gameRef.gameState.activePowerup != null) {
-      paddleColor = gameRef.gameState.activePowerup!.color;
+      _bodyPaint.color = gameRef.gameState.activePowerup!.color;
+    } else {
+      _bodyPaint.color = const Color(0xFF05D9E8);
     }
 
-    final RRect rrect = RRect.fromRectAndRadius(
-      size.toRect(),
-      const Radius.circular(4),
-    );
-
-    // Flat shadow/depth
-    final depthRRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 4, size.x, size.y),
-      const Radius.circular(4),
-    );
-    canvas.drawRRect(depthRRect, Paint()..color = Colors.black.withOpacity(0.4));
-
-    // Main body
-    canvas.drawRRect(rrect, Paint()..color = paddleColor);
-
-    // Accent line
-    final accentPaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-    canvas.drawLine(const Offset(8, 4), Offset(size.x - 8, 4), accentPaint);
+    canvas.drawRRect(_depthRRect, _depthPaint);
+    canvas.drawRRect(_rrect, _bodyPaint);
+    canvas.drawLine(const Offset(8, 4), Offset(size.x - 8, 4), _accentPaint);
   }
 
   @override
