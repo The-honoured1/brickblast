@@ -3,11 +3,20 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import '../block_blaster_game.dart';
 import '../../models/brick_type.dart';
+import '../../models/powerup_type.dart';
+import 'powerup.dart';
+import 'ball.dart';
+import 'dart:math' as math;
 
 class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
   final BrickType type;
   late int health;
   late final RectangleHitbox _hitbox;
+  
+  // Special brick state
+  double _bombTimer = 3.0;
+  TextComponent? _bombText;
+  double _opacity = 1.0;
 
   Brick({
     required Vector2 position,
@@ -23,6 +32,63 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
     anchor = Anchor.center;
     _hitbox = RectangleHitbox();
     add(_hitbox);
+
+    if (type == BrickType.bomb) {
+      _bombText = TextComponent(
+        text: '3',
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        position: size / 2,
+        anchor: Anchor.center,
+      );
+      add(_bombText!);
+    }
+
+    if (type == BrickType.ghost) {
+      _opacity = 0.0;
+    }
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    if (type == BrickType.ghost) {
+      final ball = gameRef.ball;
+      final dist = ball.position.distanceTo(position);
+      if (dist < 100) {
+        _opacity = (1.0 - (dist / 100)).clamp(0.0, 1.0);
+      } else {
+        _opacity = 0.0;
+      }
+    }
+
+    if (type == BrickType.bomb) {
+      _bombTimer -= dt;
+      if (_bombTimer <= 0) {
+        _triggerBombFailure();
+      } else {
+        _bombText?.text = _bombTimer.ceil().toString();
+      }
+    }
+  }
+
+  void _triggerBombFailure() {
+    // Destroy a row of bricks from the bottom
+    final bricks = gameRef.world.children.whereType<Brick>().toList();
+    if (bricks.isNotEmpty) {
+      double maxY = bricks.map((e) => e.position.y).reduce(math.max);
+      final bottomBricks = bricks.where((e) => (e.position.y - maxY).abs() < 5).toList();
+      for (var b in bottomBricks) {
+        b.destroy(chainTrigger: true);
+      }
+    }
+    removeFromParent();
   }
 
   @override
@@ -31,7 +97,11 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
     Color brickColor = type.color;
     if (type == BrickType.tough && health < type.hitPoints) {
       // Darken slightly as it gets damaged
-      brickColor = brickColor.withOpacity(0.5 + (0.5 * (health / type.hitPoints)));
+      brickColor = brickColor.withOpacity((0.5 + (0.5 * (health / type.hitPoints))).clamp(0.0, 1.0));
+    }
+
+    if (type == BrickType.ghost) {
+      brickColor = brickColor.withOpacity(_opacity);
     }
 
     final RRect rrect = RRect.fromRectAndRadius(
@@ -88,7 +158,32 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
       _triggerChain();
     }
 
+    if (type == BrickType.multiplier) {
+      _triggerMultiplier();
+    }
+
+    // Powerup drop roll (10% chance)
+    if (math.Random().nextDouble() < 0.15) {
+      _dropPowerup();
+    }
+
     removeFromParent();
+  }
+
+  void _triggerMultiplier() {
+    for (int i = 0; i < 2; i++) {
+      final newBall = Ball(radius: gameRef.ball.radius);
+      newBall.position = position.clone();
+      newBall.velocity = Vector2(math.cos(i * math.pi), math.sin(i * math.pi))..normalize();
+      newBall.velocity *= gameRef.ball.speed;
+      gameRef.world.add(newBall);
+    }
+  }
+
+  void _dropPowerup() {
+    final types = PowerupType.values;
+    final type = types[math.Random().nextInt(types.length)];
+    gameRef.world.add(Powerup(position: position.clone(), type: type));
   }
 
   void _triggerExplosion() {
