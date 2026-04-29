@@ -1,8 +1,12 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../game/block_blaster_game.dart';
-import '../theme/colors.dart';
-import '../theme/styles.dart';
+import '../game/game_state.dart';
+import 'overlays/home_overlay.dart';
+import 'overlays/hud_overlay.dart';
+import 'overlays/level_complete_overlay.dart';
+import 'overlays/game_over_overlay.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -12,55 +16,33 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  late final GameState _gameState;
   late final BlockBlasterGame _game;
 
   @override
   void initState() {
     super.initState();
-    _game = BlockBlasterGame();
+    _gameState = GameState();
+    _game = BlockBlasterGame(_gameState);
+    // Start paused on the home screen
+    _game.pauseEngine();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Score Header Area
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('SCORE', style: AppStyles.subScoreText),
-                      // We can use a ValueListenableBuilder later to react to game score
-                      Text('0', style: AppStyles.scoreText),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.pause, color: AppColors.textPrimary, size: 32),
-                    onPressed: () {
-                      _game.pauseEngine();
-                      // Show pause menu (todo)
-                    },
-                  )
-                ],
-              ),
-            ),
-            
-            // Flame Game Area
-            Expanded(
-              child: ClipRect(
-                child: GameWidget(
-                  game: _game,
-                ),
-              ),
-            ),
-          ],
+    return ChangeNotifierProvider.value(
+      value: _gameState,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: GameWidget<BlockBlasterGame>(
+          game: _game,
+          overlayBuilderMap: {
+            'HomeOverlay': (_, game) => HomeOverlay(game: game),
+            'HudOverlay': (_, game) => HudOverlay(game: game),
+            'LevelCompleteOverlay': (_, game) => LevelCompleteOverlay(game: game),
+            'GameOverOverlay': (_, game) => GameOverOverlay(game: game),
+          },
+          initialActiveOverlays: const ['HomeOverlay'],
         ),
       ),
     );
