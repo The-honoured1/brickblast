@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../game/block_blaster_game.dart';
 import '../../game/game_state.dart';
 import '../../theme/game_effects.dart';
+import '../../theme/colors.dart';
 
 class HudOverlay extends StatelessWidget {
   final BlockBlasterGame game;

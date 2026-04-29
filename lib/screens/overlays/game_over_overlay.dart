@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../game/block_blaster_game.dart';
+import '../../theme/colors.dart';
 
 class GameOverOverlay extends StatefulWidget {
   final BlockBlasterGame game;
@@ -34,15 +35,16 @@ class _GameOverOverlayState extends State<GameOverOverlay>
     final score = widget.game.gameState.score;
     final hi = widget.game.gameState.highScore;
     final isHighScore = score >= hi && score > 0;
+    final isDark = widget.game.gameState.isDarkMode;
 
     return AnimatedBuilder(
       animation: _crackCtrl,
       builder: (_, __) {
         return Stack(
           children: [
-            // Dark overlay that fades in
+            // Background overlay that responds to theme
             Container(
-              color: Colors.black.withOpacity(_crackCtrl.value * 0.9),
+              color: AppColors.background(isDark).withOpacity(_crackCtrl.value * 0.95),
             ),
             // Crack lines drawn over the screen
             CustomPaint(
@@ -92,14 +94,14 @@ class _GameOverOverlayState extends State<GameOverOverlay>
                         style: GoogleFonts.rajdhani(
                           fontSize: 64,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: AppColors.textPrimary(isDark),
                         ),
                       ),
                       Text(
                         'SCORE',
                         style: GoogleFonts.rajdhani(
                           fontSize: 14,
-                          color: Colors.white38,
+                          color: isDark ? Colors.white38 : Colors.black38,
                           letterSpacing: 4,
                         ),
                       ),
@@ -114,7 +116,10 @@ class _GameOverOverlayState extends State<GameOverOverlay>
                             color: const Color(0xFFFF2D78),
                             borderRadius: BorderRadius.circular(12),
                             border: const Border(
-                              bottom: BorderSide(color: Color(0xFF880E4F), width: 6),
+                              bottom: BorderSide(color: Colors.black, width: 4),
+                              top: BorderSide(color: Colors.black, width: 2),
+                              left: BorderSide(color: Colors.black, width: 2),
+                              right: BorderSide(color: Colors.black, width: 2),
                             ),
                           ),
                           alignment: Alignment.center,
@@ -138,7 +143,7 @@ class _GameOverOverlayState extends State<GameOverOverlay>
                           style: GoogleFonts.rajdhani(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white54,
+                            color: isDark ? Colors.white38 : Colors.black38,
                             letterSpacing: 3,
                           ),
                         ),

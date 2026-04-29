@@ -12,6 +12,11 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
   final BrickType type;
   late int health;
   double _opacity = 1.0;
+  late final RectangleHitbox _hitbox;
+  
+  // Special brick state
+  double _bombTimer = 3.0;
+  TextComponent? _bombText;
   
   // Cached Paints and Shapes
   late final Paint _depthPaint;

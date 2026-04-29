@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../game/block_blaster_game.dart';
+import '../../theme/colors.dart';
 
 class HomeOverlay extends StatefulWidget {
   final BlockBlasterGame game;
@@ -96,6 +97,10 @@ class _HomeOverlayState extends State<HomeOverlay>
       scale: _pulseAnim,
       child: GestureDetector(
         onTap: _startGame,
+        child: Container(
+          width: 200,
+          height: 60,
+          decoration: BoxDecoration(
             color: const Color(0xFFFF2D78),
             borderRadius: BorderRadius.circular(12),
             border: const Border(

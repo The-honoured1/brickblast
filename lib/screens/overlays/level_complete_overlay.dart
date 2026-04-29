@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../game/block_blaster_game.dart';
+import '../../theme/colors.dart';
 
 class LevelCompleteOverlay extends StatefulWidget {
   final BlockBlasterGame game;
@@ -81,8 +82,9 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = widget.game.gameState.isDarkMode;
     return Container(
-      color: Colors.black87,
+      color: AppColors.background(isDark),
       child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -91,8 +93,7 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay>
               'LEVEL CLEAR!',
               style: GoogleFonts.rajdhani(
                 fontSize: 48,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: AppColors.textPrimary(isDark),
                 letterSpacing: 4,
               ),
             ),
@@ -125,14 +126,14 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay>
               style: GoogleFonts.rajdhani(
                 fontSize: 56,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: AppColors.textPrimary(isDark),
               ),
             ),
             Text(
               'SCORE',
               style: GoogleFonts.rajdhani(
                 fontSize: 16,
-                color: Colors.white38,
+                color: isDark ? Colors.white38 : Colors.black38,
                 letterSpacing: 4,
               ),
             ),
@@ -156,7 +157,10 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay>
                     color: const Color(0xFF05D9E8),
                     borderRadius: BorderRadius.circular(8),
                     border: const Border(
-                      bottom: BorderSide(color: Color(0xFF00B0C8), width: 6),
+                      bottom: BorderSide(color: Colors.black, width: 4),
+                      top: BorderSide(color: Colors.black, width: 2),
+                      left: BorderSide(color: Colors.black, width: 2),
+                      right: BorderSide(color: Colors.black, width: 2),
                     ),
                   ),
                   alignment: Alignment.center,
