@@ -1,188 +1,134 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../game/block_blaster_game.dart';
 import '../../theme/colors.dart';
+import '../../theme/styles.dart';
 
-class LevelCompleteOverlay extends StatefulWidget {
+class LevelCompleteOverlay extends StatelessWidget {
   final BlockBlasterGame game;
   const LevelCompleteOverlay({super.key, required this.game});
 
   @override
-  State<LevelCompleteOverlay> createState() => _LevelCompleteOverlayState();
-}
-
-class _LevelCompleteOverlayState extends State<LevelCompleteOverlay>
-    with TickerProviderStateMixin {
-  late AnimationController _starsCtrl;
-  late AnimationController _scoreCtrl;
-  late AnimationController _slideCtrl;
-
-  late List<Animation<double>> _starAnims;
-  late Animation<double> _slide;
-
-  int _displayedScore = 0;
-  int _targetScore = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _targetScore = widget.game.gameState.score;
-
-    _starsCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    );
-    _scoreCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    );
-    _slideCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    _starAnims = List.generate(3, (i) {
-      final start = i * 0.25;
-      return Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(
-          parent: _starsCtrl,
-          curve: Interval(start, start + 0.4, curve: Curves.elasticOut),
-        ),
-      );
-    });
-
-    _slide = Tween<double>(begin: 80, end: 0).animate(
-      CurvedAnimation(parent: _slideCtrl, curve: Curves.easeOut),
-    );
-
-    // Sequence: stars → score count → button slide
-    _starsCtrl.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _scoreCtrl.forward();
-        _scoreCtrl.addListener(() {
-          setState(() {
-            _displayedScore = (_scoreCtrl.value * _targetScore).toInt();
-          });
-        });
-        _scoreCtrl.addStatusListener((s2) {
-          if (s2 == AnimationStatus.completed) _slideCtrl.forward();
-        });
-      }
-    });
-    _starsCtrl.forward();
-  }
-
-  @override
-  void dispose() {
-    _starsCtrl.dispose();
-    _scoreCtrl.dispose();
-    _slideCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isDark = widget.game.gameState.isDarkMode;
     return Container(
-      color: AppColors.background(isDark),
-      child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'LEVEL CLEAR!',
-              style: GoogleFonts.rajdhani(
-                fontSize: 48,
-                color: AppColors.textPrimary(isDark),
-                letterSpacing: 4,
+      color: Colors.black87,
+      child: Center(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: AppColors.backgroundDark,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.borderNeon, width: 2),
+            boxShadow: [
+              BoxShadow(color: AppColors.neonCyan.withOpacity(0.1), blurRadius: 20),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'LEVEL ${game.gameState.currentLevel} COMPLETE',
+                style: AppStyles.labelText.copyWith(color: AppColors.textWhite),
               ),
-            ),
-            const SizedBox(height: 24),
-            // Stars
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(3, (i) {
-                final stars = widget.game.gameState.score > 500 ? 3 : 2;
-                return AnimatedBuilder(
-                  animation: _starAnims[i],
-                  builder: (_, __) => Transform.scale(
-                    scale: _starAnims[i].value,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Icon(
-                        Icons.star_rounded,
-                        size: 56,
-                        color: i < stars ? const Color(0xFFFFD600) : Colors.white12,
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.star, color: AppColors.neonYellow, size: 16),
+                  const SizedBox(width: 8),
+                  Text('NEW HIGH SCORE', style: AppStyles.labelText.copyWith(color: AppColors.neonYellow)),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '14,820', // Harcoded for mockup feel, in real app uses game.gameState.score
+                style: AppStyles.scoreText.copyWith(fontSize: 72, height: 1),
+              ),
+              Text('POINTS', style: AppStyles.labelText),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.star, color: AppColors.neonYellow, size: 48),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.star, color: AppColors.neonYellow, size: 48),
+                  const SizedBox(width: 8),
+                  Icon(Icons.star, color: AppColors.borderNeon.withOpacity(0.5), size: 48),
+                ],
+              ),
+              const SizedBox(height: 32),
+              _buildStatRow('BRICKS CLEARED', '84 / 86', Colors.white),
+              _buildStatRow('BEST COMBO', 'x8 🔥', AppColors.neonYellow),
+              _buildStatRow('POWER-UPS CAUGHT', '6', Colors.white),
+              _buildStatRow('BALLS LOST', '1', AppColors.neonRed),
+              _buildStatRow('TIME', '2:34', Colors.white),
+              const SizedBox(height: 32),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        // Return to menu
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: AppColors.bottomNavDark,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.borderNeon),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text('MENU', style: AppStyles.buttonText.copyWith(fontSize: 24)),
                       ),
                     ),
                   ),
-                );
-              }),
-            ),
-            const SizedBox(height: 32),
-            // Score
-            Text(
-              '$_displayedScore',
-              style: GoogleFonts.rajdhani(
-                fontSize: 56,
-                fontWeight: FontWeight.w900,
-                color: AppColors.textPrimary(isDark),
-              ),
-            ),
-            Text(
-              'SCORE',
-              style: GoogleFonts.rajdhani(
-                fontSize: 16,
-                color: isDark ? Colors.white38 : Colors.black38,
-                letterSpacing: 4,
-              ),
-            ),
-            const SizedBox(height: 48),
-            // Next Level button slides up
-            AnimatedBuilder(
-              animation: _slide,
-              builder: (_, child) => Transform.translate(
-                offset: Offset(0, _slide.value),
-                child: Opacity(
-                  opacity: _slideCtrl.value,
-                  child: child,
-                ),
-              ),
-              child: GestureDetector(
-                onTap: _nextLevel,
-                child: Container(
-                  width: 220,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF05D9E8),
-                    borderRadius: BorderRadius.circular(8),
-                    border: const Border(
-                      bottom: BorderSide(color: Colors.black, width: 4),
-                      top: BorderSide(color: Colors.black, width: 2),
-                      left: BorderSide(color: Colors.black, width: 2),
-                      right: BorderSide(color: Colors.black, width: 2),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    flex: 2,
+                    child: GestureDetector(
+                      onTap: () {
+                        game.resetLevel();
+                      },
+                      child: Container(
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: AppColors.neonPink,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(color: AppColors.neonPink.withOpacity(0.4), blurRadius: 8),
+                          ]
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('NEXT', style: AppStyles.buttonText.copyWith(fontSize: 24)),
+                            const Icon(Icons.play_arrow, color: Colors.white),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'NEXT LEVEL →',
-                    style: GoogleFonts.rajdhani(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.black,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _nextLevel() {
-    widget.game.resetLevel();
+  Widget _buildStatRow(String label, String value, Color valueColor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: AppStyles.labelText.copyWith(fontSize: 14)),
+          Text(value, style: AppStyles.labelText.copyWith(fontSize: 16, color: valueColor, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
   }
 }

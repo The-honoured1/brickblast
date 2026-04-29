@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 
 class AppStyles {
-  static const TextStyle headline = TextStyle(
+  static TextStyle headline = GoogleFonts.teko(
     fontSize: 48,
-    fontWeight: FontWeight.w900,
-    color: AppColors.textPrimary,
-    letterSpacing: -1.5,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textWhite,
+    letterSpacing: 2.0,
   );
 
-  static const TextStyle scoreText = TextStyle(
+  static TextStyle scoreText = GoogleFonts.teko(
     fontSize: 64,
-    fontWeight: FontWeight.w900,
-    color: AppColors.acidLime,
-    letterSpacing: -2.0,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textWhite,
   );
 
-  static const TextStyle subScoreText = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.bold,
-    color: AppColors.textPrimary,
+  static TextStyle labelText = GoogleFonts.rajdhani(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textMuted,
+    letterSpacing: 1.5,
+  );
+  
+  static TextStyle buttonText = GoogleFonts.teko(
+    fontSize: 28,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textWhite,
+    letterSpacing: 2.0,
   );
 }

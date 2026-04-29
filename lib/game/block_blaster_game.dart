@@ -163,12 +163,11 @@ class BlockBlasterGame extends FlameGame with HasCollisionDetection, TapCallback
     final bricks = world.children.whereType<Brick>();
     final destructibleBricks = bricks.where((b) => !b.type.isIndestructible);
     
-    if (destructibleBricks.isEmpty && !overlays.isActive('LevelCompleteOverlay') && !overlays.isActive('HomeOverlay')) {
+    if (destructibleBricks.isEmpty && !overlays.isActive('LevelCompleteOverlay')) {
        _completeLevel();
     }
 
-    if (gameState.lives <= 0 && overlays.isActive('HudOverlay') && !overlays.isActive('GameOverOverlay')) {
-      overlays.remove('HudOverlay');
+    if (gameState.lives <= 0 && !overlays.isActive('GameOverOverlay')) {
       overlays.add('GameOverOverlay');
       pauseEngine();
     }
@@ -190,9 +189,6 @@ class BlockBlasterGame extends FlameGame with HasCollisionDetection, TapCallback
     ball.resetToPaddle();
     loadLevel(gameState.currentLevel);
     resumeEngine();
-    if (!overlays.isActive('HudOverlay')) {
-      overlays.add('HudOverlay');
-    }
     overlays.remove('LevelCompleteOverlay');
     overlays.remove('GameOverOverlay');
   }
@@ -223,37 +219,7 @@ class BlockBlasterGame extends FlameGame with HasCollisionDetection, TapCallback
 
   @override
   Color backgroundColor() {
-    final isDark = gameState.isDarkMode;
-    // Determine world index (0 to 5)
-    int worldIndex = (gameState.currentLevel - 1) ~/ 10;
-    
-    // Light/Dark base color per world (Zen style)
-    Color baseColor;
-    if (!isDark) {
-      switch (worldIndex % 6) {
-        case 0: baseColor = const Color(0xFFF2F9F2); break; // Jungle Light
-        case 1: baseColor = const Color(0xFFF2F2F9); break; // Space Light
-        case 2: baseColor = const Color(0xFFF2F9F9); break; // Underwater Light
-        case 3: baseColor = const Color(0xFFF9F2F2); break; // Volcano Light
-        case 4: baseColor = const Color(0xFFF9F9FF); break; // Ice Light
-        case 5: baseColor = const Color(0xFFF9F5F9); break; // NeonCity Light
-        default: baseColor = const Color(0xFFF9F9F9);
-      }
-    } else {
-      switch (worldIndex % 6) {
-        case 0: baseColor = const Color(0xFF142014); break; // Jungle Dark
-        case 1: baseColor = const Color(0xFF141420); break; // Space Dark
-        case 2: baseColor = const Color(0xFF142020); break; // Underwater Dark
-        case 3: baseColor = const Color(0xFF201414); break; // Volcano Dark
-        case 4: baseColor = const Color(0xFF14141A); break; // Ice Dark
-        case 5: baseColor = const Color(0xFF1A141A); break; // NeonCity Dark
-        default: baseColor = const Color(0xFF1A1A1A);
-      }
-    }
-
-    double warmth = (gameState.combo / 20).clamp(0.0, 1.0);
-    final lerpTarget = isDark ? const Color(0xFF2D1A1A) : const Color(0xFFF9EBEB);
-    return Color.lerp(baseColor, lerpTarget, warmth)!;
+    return const Color(0xFF0F0B1E); // Match AppColors.backgroundDark
   }
 
   void playSfx(String name) {

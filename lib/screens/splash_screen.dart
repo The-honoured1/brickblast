@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'game_screen.dart';
+import 'main_nav_screen.dart';
 import '../theme/colors.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       if (mounted) {
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const GameScreen(),
+            pageBuilder: (_, __, ___) => const MainNavScreen(),
             transitionDuration: const Duration(milliseconds: 800),
             transitionsBuilder: (_, animation, __, child) => FadeTransition(
               opacity: animation,
