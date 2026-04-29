@@ -106,9 +106,26 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
 
     final RRect rrect = RRect.fromRectAndRadius(
       size.toRect(),
-      const Radius.circular(4),
+      const Radius.circular(2),
     );
+    
+    // Flat depth: Draw a darker bottom layer
+    final depthOffset = Vector2(0, 3).toOffset();
+    final depthRRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 2, size.x, size.y),
+      const Radius.circular(2),
+    );
+    canvas.drawRRect(depthRRect, Paint()..color = Colors.black.withOpacity(0.3));
+    
+    // Main brick face
     canvas.drawRRect(rrect, Paint()..color = brickColor);
+    
+    // Top highlight line for extra "flat" pop
+    final highlightPaint = Paint()
+      ..color = Colors.white.withOpacity(0.2)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    canvas.drawLine(const Offset(2, 2), Offset(size.x - 2, 2), highlightPaint);
     
     // Draw crack lines if damaged
     if (type == BrickType.tough && health < type.hitPoints) {

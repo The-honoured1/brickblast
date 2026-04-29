@@ -41,11 +41,13 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
     // Trail juice based on combo
     int combo = gameRef.gameState.combo;
     if (combo > 2) {
-      final trailPaint = Paint()..color = paint.color.withOpacity(0.3);
-      for (int i = 1; i <= min(combo, 10); i++) {
+      for (int i = 1; i <= min(combo, 8); i++) {
+        // Use more solid, shrinking circles for the trail
+        final trailPaint = Paint()
+          ..color = paint.color.withOpacity(0.4 - (i * 0.04).clamp(0, 0.4));
         canvas.drawCircle(
-          Offset(-velocity.x * (i * 0.005), -velocity.y * (i * 0.005)), 
-          radius * 0.8, 
+          Offset(-velocity.x * (i * 0.004), -velocity.y * (i * 0.004)), 
+          radius * (1.0 - (i * 0.1)).clamp(0.1, 1.0), 
           trailPaint
         );
       }

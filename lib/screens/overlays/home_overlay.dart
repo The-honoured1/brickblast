@@ -37,11 +37,7 @@ class _HomeOverlayState extends State<HomeOverlay>
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF120A1E), Color(0xFF0D1B2A)],
-        ),
+        color: Color(0xFF0A0A0A), // Solid dark background
       ),
       child: SafeArea(
         child: Column(
@@ -77,10 +73,6 @@ class _HomeOverlayState extends State<HomeOverlay>
                 fontWeight: FontWeight.w900,
                 color: const Color(0xFF05D9E8),
                 letterSpacing: 8,
-                shadows: [
-                  const Shadow(color: Color(0xFF05D9E8), blurRadius: 24),
-                  const Shadow(color: Color(0xFF05D9E8), blurRadius: 48),
-                ],
               ),
             ),
             Text(
@@ -90,10 +82,6 @@ class _HomeOverlayState extends State<HomeOverlay>
                 fontWeight: FontWeight.w900,
                 color: const Color(0xFFFF2D78),
                 letterSpacing: 8,
-                shadows: [
-                  const Shadow(color: Color(0xFFFF2D78), blurRadius: 24),
-                  const Shadow(color: Color(0xFFFF2D78), blurRadius: 48),
-                ],
               ),
             ),
           ],
@@ -110,18 +98,11 @@ class _HomeOverlayState extends State<HomeOverlay>
         child: Container(
           width: 200,
           height: 60,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFFFF2D78), Color(0xFFFF7043)],
+            color: const Color(0xFFFF2D78),
+            borderRadius: BorderRadius.circular(12),
+            border: const Border(
+              bottom: BorderSide(color: Color(0xFF880E4F), width: 6),
             ),
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFFF2D78).withOpacity(0.6),
-                blurRadius: 20,
-                spreadRadius: 2,
-              ),
-            ],
           ),
           alignment: Alignment.center,
           child: Text(
@@ -158,9 +139,9 @@ class _HomeOverlayState extends State<HomeOverlay>
         width: 90,
         height: 90,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.5), width: 1.5),
+          color: color.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withOpacity(0.3), width: 2),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

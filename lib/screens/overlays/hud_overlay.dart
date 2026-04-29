@@ -100,9 +100,6 @@ class HudOverlay extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: active ? const Color(0xFFFF2D78) : Colors.white24,
-                boxShadow: active
-                    ? [BoxShadow(color: const Color(0xFFFF2D78).withOpacity(0.7), blurRadius: 8)]
-                    : null,
               ),
             ),
           ),
@@ -119,12 +116,6 @@ class HudOverlay extends StatelessWidget {
           fontSize: 32 + (state.combo * 0.5).clamp(0, 12),
           fontWeight: FontWeight.w900,
           color: GameEffects.comboColor(state.combo),
-          shadows: [
-            Shadow(
-              color: GameEffects.comboColor(state.combo).withOpacity(0.7),
-              blurRadius: 16,
-            ),
-          ],
         ),
         child: Text('x${state.combo}'),
       ),

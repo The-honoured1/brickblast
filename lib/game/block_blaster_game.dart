@@ -12,6 +12,8 @@ import 'components/ball.dart';
 import 'components/brick.dart';
 import 'game_state.dart';
 import '../models/brick_type.dart';
+import '../models/level_data.dart';
+import 'package:flame/events.dart';
 
 class BlockBlasterGame extends FlameGame with HasCollisionDetection, TapCallbacks {
   final GameState gameState;

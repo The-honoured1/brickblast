@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import '../block_blaster_game.dart';
 import 'ball.dart';
+import 'brick.dart';
 import '../../models/powerup_type.dart';
 
 /// A one-hit safety net that appears below the paddle when Shield powerup is active.

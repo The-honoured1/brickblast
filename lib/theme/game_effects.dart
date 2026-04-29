@@ -63,7 +63,8 @@ class _ScreenFlashState extends State<ScreenFlash>
       animation: _ctrl,
       builder: (_, __) => IgnorePointer(
         child: Container(
-          color: widget.color.withOpacity((1 - _ctrl.value) * 0.6),
+          // Simplified to a more solid pop
+          color: widget.color.withOpacity((1 - _ctrl.value) * 0.45),
         ),
       ),
     );

@@ -118,9 +118,25 @@ class Paddle extends PositionComponent
 
     final RRect rrect = RRect.fromRectAndRadius(
       size.toRect(),
-      const Radius.circular(8),
+      const Radius.circular(4),
     );
+
+    // Flat shadow/depth
+    final depthRRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 4, size.x, size.y),
+      const Radius.circular(4),
+    );
+    canvas.drawRRect(depthRRect, Paint()..color = Colors.black.withOpacity(0.4));
+
+    // Main body
     canvas.drawRRect(rrect, Paint()..color = paddleColor);
+
+    // Accent line
+    final accentPaint = Paint()
+      ..color = Colors.white.withOpacity(0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    canvas.drawLine(const Offset(8, 4), Offset(size.x - 8, 4), accentPaint);
   }
 
   @override

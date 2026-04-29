@@ -64,9 +64,6 @@ class _GameOverOverlayState extends State<GameOverOverlay>
                           fontWeight: FontWeight.w900,
                           color: const Color(0xFFFF2D78),
                           letterSpacing: 4,
-                          shadows: [
-                            const Shadow(color: Color(0xFFFF2D78), blurRadius: 32),
-                          ],
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -114,16 +111,11 @@ class _GameOverOverlayState extends State<GameOverOverlay>
                           width: 220,
                           height: 56,
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFFFF2D78), Color(0xFFFF7043)],
+                            color: const Color(0xFFFF2D78),
+                            borderRadius: BorderRadius.circular(12),
+                            border: const Border(
+                              bottom: BorderSide(color: Color(0xFF880E4F), width: 6),
                             ),
-                            borderRadius: BorderRadius.circular(28),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFFFF2D78).withOpacity(0.5),
-                                blurRadius: 20,
-                              ),
-                            ],
                           ),
                           alignment: Alignment.center,
                           child: Text(

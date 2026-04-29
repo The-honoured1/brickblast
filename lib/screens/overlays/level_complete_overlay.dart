@@ -112,9 +112,6 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay>
                         Icons.star_rounded,
                         size: 56,
                         color: i < stars ? const Color(0xFFFFD600) : Colors.white12,
-                        shadows: i < stars
-                            ? [const Shadow(color: Color(0xFFFFD600), blurRadius: 20)]
-                            : null,
                       ),
                     ),
                   ),
@@ -156,16 +153,11 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay>
                   width: 220,
                   height: 56,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF05D9E8), Color(0xFF00B0C8)],
+                    color: const Color(0xFF05D9E8),
+                    borderRadius: BorderRadius.circular(8),
+                    border: const Border(
+                      bottom: BorderSide(color: Color(0xFF00B0C8), width: 6),
                     ),
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF05D9E8).withOpacity(0.5),
-                        blurRadius: 20,
-                      ),
-                    ],
                   ),
                   alignment: Alignment.center,
                   child: Text(
