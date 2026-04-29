@@ -96,6 +96,7 @@ class Powerup extends PositionComponent
     super.onCollisionStart(intersectionPoints, other);
     if (other is Paddle) {
       gameRef.gameState.activatePowerup(type);
+      gameRef.playSfx('powerup.wav');
       removeFromParent();
     }
   }

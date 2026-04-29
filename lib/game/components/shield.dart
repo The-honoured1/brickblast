@@ -79,6 +79,15 @@ class LaserBolt extends PositionComponent
   }
 
   @override
+  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+    super.onCollisionStart(intersectionPoints, other);
+    if (other is Brick) {
+      other.hit();
+      removeFromParent();
+    }
+  }
+
+  @override
   void render(Canvas canvas) {
     final paint = Paint()..color = PowerupType.laserPaddle.color;
     canvas.drawRect(size.toRect(), paint);

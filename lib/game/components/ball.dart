@@ -84,6 +84,7 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
       velocity.y = 0;
       velocity.x = 0;
       gameRef.gameState.loseLife();
+      gameRef.playSfx('lose_life.wav');
       // Drop logic will be handled outside
     }
   }
@@ -100,6 +101,7 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
 
       velocity = Vector2(sin(angle), -cos(angle)) * speed;
       gameRef.gameState.resetCombo();
+      gameRef.playSfx('paddle_hit.wav');
       
     } else if (other is Brick) {
       if (!isFireball) {

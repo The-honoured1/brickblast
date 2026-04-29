@@ -128,10 +128,12 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
     if (type.isIndestructible) {
       // Micro shake for hitting steel
       gameRef.shake(1.0, 0.05);
+      gameRef.playSfx('clink.wav');
       return;
     }
 
     health--;
+    gameRef.playSfx('hit.wav');
     
     // Juice: micro-shake
     gameRef.shake(2.0, 0.05);
@@ -150,6 +152,7 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
     // Juice: Screen flash/shake for explosive
     if (type == BrickType.explosive) {
       gameRef.shake(5.0, 0.15);
+      gameRef.playSfx('explosion.wav');
       _triggerExplosion();
     }
     
