@@ -161,6 +161,10 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
       gameRef.gameState.addScore(10);
     }
     
+    // Juice: Particles
+    gameRef.spawnParticles(position, type.color);
+    gameRef.shake(3.0, 0.1);
+
     // Juice: Screen flash/shake for explosive
     if (type == BrickType.explosive) {
       gameRef.shake(5.0, 0.15);
@@ -177,7 +181,7 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
       _triggerMultiplier();
     }
 
-    // Powerup drop roll (10% chance)
+    // Powerup drop roll (15% chance)
     if (math.Random().nextDouble() < 0.15) {
       _dropPowerup();
     }

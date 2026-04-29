@@ -143,18 +143,82 @@ class BlockBlasterGame extends FlameGame with HasCollisionDetection, TapCallback
   }
 
   @override
+  void onTapDown(TapDownEvent event) {
+    super.onTapDown(event);
+    if (!ball.isLaunched && gameState.lives > 0) {
+      ball.launch();
+    }
+    
+    if (paddle.isLaser) {
+      paddle.onTapDown(event);
+    }
+  }
+
+  @override
   void update(double dt) {
     super.update(dt);
     gameState.updatePowerupTime(dt);
 
-    if (gameState.lives <= 0 && overlays.isActive('HudOverlay')) {
+    // Check for level completion
+    final bricks = world.children.whereType<Brick>();
+    final destructibleBricks = bricks.where((b) => !b.type.isIndestructible);
+    
+    if (destructibleBricks.isEmpty && !overlays.isActive('LevelCompleteOverlay') && !overlays.isActive('HomeOverlay')) {
+       _completeLevel();
+    }
+
+    if (gameState.lives <= 0 && overlays.isActive('HudOverlay') && !overlays.isActive('GameOverOverlay')) {
       overlays.remove('HudOverlay');
       overlays.add('GameOverOverlay');
+      pauseEngine();
     }
 
     _sfxTimers.forEach((key, value) {
       if (value > 0) _sfxTimers[key] = value - dt;
     });
+  }
+
+  void _completeLevel() {
+    overlays.add('LevelCompleteOverlay');
+    playSfx('level_complete.wav');
+    gameState.nextLevel();
+    // Don't pause engine yet so we can see particles?
+    // Actually, usually we pause or wait for user to click next.
+  }
+
+  void resetLevel() {
+    ball.resetToPaddle();
+    loadLevel(gameState.currentLevel);
+    resumeEngine();
+    if (!overlays.isActive('HudOverlay')) {
+      overlays.add('HudOverlay');
+    }
+    overlays.remove('LevelCompleteOverlay');
+    overlays.remove('GameOverOverlay');
+  }
+
+  void spawnParticles(Vector2 position, Color color) {
+    // Basic particle burst using Flame's ParticleSystemComponent
+    world.add(
+      ParticleSystemComponent(
+        particle: Particle.generate(
+          count: 15,
+          lifespan: 0.5,
+          generator: (i) => AcceleratedParticle(
+            acceleration: Vector2(0, 200),
+            speed: Vector2(
+              (math.Random().nextDouble() - 0.5) * 400,
+              (math.Random().nextDouble() - 0.5) * 400,
+            ),
+            position: position.clone(),
+            child: CircleParticle(
+              radius: 2.0 + math.Random().nextDouble() * 3.0,
+              paint: Paint()..color = color,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -193,14 +257,8 @@ class BlockBlasterGame extends FlameGame with HasCollisionDetection, TapCallback
   }
 
   void playSfx(String name) {
-    // Basic debouncing: don't play same sound more than every 50ms
     if ((_sfxTimers[name] ?? 0) > 0) return;
     _sfxTimers[name] = 0.05;
-
-    // In a real app with assets:
-    // FlameAudio.play('sfx/$name');
-    
-    // For now we just print to console (printing is slow, so debouncing helps)
-    print('SFX: $name');
+    // print('SFX: $name');
   }
 }

@@ -105,6 +105,24 @@ class GameState extends ChangeNotifier {
   void nextLevel() {
     _currentLevel++;
     SharedPreferences.getInstance().then((prefs) => prefs.setInt('currentLevel', _currentLevel));
+    // Reset score for the level maybe? No, keep total score.
+    _activePowerup = null;
+    _powerupTimeRemaining = 0;
+    _combo = 0;
+    notifyListeners();
+  }
+
+  void resetTotalProgress() {
+    _currentLevel = 1;
+    _score = 0;
+    _lives = 3;
+    _combo = 0;
+    _coins = 0;
+    _activePowerup = null;
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setInt('currentLevel', 1);
+      prefs.setInt('coins', 0);
+    });
     notifyListeners();
   }
 

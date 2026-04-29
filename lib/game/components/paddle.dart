@@ -14,6 +14,8 @@ class Paddle extends PositionComponent
   final double baseWidth = 100.0;
   
   // Powerup state track
+  PowerupType? _lastPowerup;
+  double _laserTimer = 0.0;
   Ball? _stuckBall;
 
   // Cached Paints and Shapes
@@ -102,10 +104,18 @@ class Paddle extends PositionComponent
     _lastPowerup = gameRef.gameState.activePowerup;
   }
 
+  void impact() {
+    add(
+      ScaleEffect.to(
+        Vector2(1.2, 0.8),
+        EffectController(duration: 0.05, reverseDuration: 0.05),
+      ),
+    );
+  }
+
   void _releaseBall() {
     if (_stuckBall != null) {
-      _stuckBall!.velocity = Vector2(0, -1)..normalize();
-      _stuckBall!.velocity *= _stuckBall!.speed;
+      _stuckBall!.launch();
       _stuckBall = null;
     }
   }

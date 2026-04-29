@@ -161,10 +161,7 @@ class _GameOverOverlayState extends State<GameOverOverlay>
 
   void _tryAgain() {
     widget.game.gameState.resetGame();
-    widget.game.overlays.remove('GameOverOverlay');
-    widget.game.overlays.add('HudOverlay');
-    widget.game.loadLevel(widget.game.gameState.currentLevel);
-    widget.game.resumeEngine();
+    widget.game.resetLevel();
   }
 
   void _home() {

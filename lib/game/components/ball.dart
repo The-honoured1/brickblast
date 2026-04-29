@@ -9,10 +9,12 @@ import '../../models/powerup_type.dart';
 
 class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionCallbacks {
   Vector2 velocity = Vector2.zero();
-  double speed = 400.0;
+  double baseSpeed = 450.0;
+  double speedMultiplier = 1.0;
+  bool isLaunched = false;
   
   // Cached trail paints
-  final List<Paint> _trailPaints = List.generate(8, (i) => Paint());
+  final List<Paint> _trailPaints = List.generate(12, (i) => Paint());
 
   Ball({required double radius}) : super(radius: radius);
 
@@ -21,37 +23,54 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
   bool get isFast => gameRef.gameState.activePowerup == PowerupType.fastBall;
   bool get isSlow => gameRef.gameState.activePowerup == PowerupType.slowBall;
 
+  double get currentSpeed {
+    double s = baseSpeed * speedMultiplier;
+    if (isFast) s *= 1.4;
+    if (isSlow) s *= 0.7;
+    return s;
+  }
+
   @override
   Future<void> onLoad() async {
     super.onLoad();
     anchor = Anchor.center;
-    
-    position = Vector2(gameRef.size.x / 2, gameRef.size.y - 180);
-    
-    velocity = Vector2(0, -1)..normalize();
-    velocity *= speed;
-
+    resetToPaddle();
     add(CircleHitbox());
+  }
+
+  void resetToPaddle() {
+    isLaunched = false;
+    velocity = Vector2.zero();
+    speedMultiplier = 1.0;
+  }
+
+  void launch() {
+    if (isLaunched) return;
+    isLaunched = true;
+    velocity = Vector2(0, -1)..normalize();
+    velocity *= currentSpeed;
   }
   
   @override
   void render(Canvas canvas) {
     paint.color = Colors.white;
     if (isFireball) {
-      paint.color = Colors.orange;
+      paint.color = Colors.orangeAccent;
+    } else if (speedMultiplier > 1.5) {
+      paint.color = const Color(0xFF00E5FF); // Cyber cyan for high speed
     }
     
-    // Trail juice based on combo
-    int combo = gameRef.gameState.combo;
-    if (combo > 2) {
+    // Trail juice based on speed/combo
+    if (isLaunched) {
       final baseTrailColor = paint.color;
-      for (int i = 1; i <= min(combo, 8); i++) {
+      int trailLength = (speedMultiplier * 6).toInt().clamp(4, 12);
+      for (int i = 1; i <= trailLength; i++) {
         final trailPaint = _trailPaints[i - 1]
-          ..color = baseTrailColor.withOpacity(0.4 - (i * 0.04).clamp(0, 0.4));
+          ..color = baseTrailColor.withOpacity((0.3 - (i * 0.02)).clamp(0, 0.3));
         
         canvas.drawCircle(
-          Offset(-velocity.x * (i * 0.004), -velocity.y * (i * 0.004)), 
-          radius * (1.0 - (i * 0.1)).clamp(0.1, 1.0), 
+          Offset(-velocity.x * (i * 0.003), -velocity.y * (i * 0.003)), 
+          radius * (1.0 - (i * 0.08)).clamp(0.2, 1.0), 
           trailPaint
         );
       }
@@ -64,9 +83,11 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
   void update(double dt) {
     super.update(dt);
     
-    double currentSpeed = speed;
-    if (isFast) currentSpeed *= 1.5;
-    if (isSlow) currentSpeed *= 0.6;
+    if (!isLaunched) {
+      position.x = gameRef.paddle.position.x;
+      position.y = gameRef.paddle.position.y - gameRef.paddle.size.y / 2 - radius;
+      return;
+    }
     
     Vector2 moveStep = velocity.normalized() * currentSpeed * dt;
     position += moveStep;
@@ -76,22 +97,29 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
     if (position.x - currentRadius < 0) {
       position.x = currentRadius;
       velocity.x = -velocity.x;
+      gameRef.shake(1.0, 0.05);
     } else if (position.x + currentRadius > gameRef.size.x) {
       position.x = gameRef.size.x - currentRadius;
       velocity.x = -velocity.x;
+      gameRef.shake(1.0, 0.05);
     }
 
     if (position.y - currentRadius < 0) {
       position.y = currentRadius;
       velocity.y = -velocity.y;
+      gameRef.shake(1.0, 0.05);
     } else if (position.y + currentRadius > gameRef.size.y) {
-      // Bottom boundary
-      position.y = gameRef.size.y - currentRadius;
-      velocity.y = 0;
-      velocity.x = 0;
+      // Failure state
       gameRef.gameState.loseLife();
       gameRef.playSfx('lose_life.wav');
-      // Drop logic will be handled outside
+      gameRef.shake(10.0, 0.2);
+      
+      if (gameRef.gameState.lives > 0) {
+        resetToPaddle();
+      } else {
+        // Game Over handled in block_blaster_game update
+        velocity = Vector2.zero();
+      }
     }
   }
 
@@ -105,9 +133,12 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
       final ratio = (delta / maxDelta).clamp(-1.0, 1.0);
       final angle = ratio * (pi / 3); 
 
-      velocity = Vector2(sin(angle), -cos(angle)) * speed;
+      velocity = Vector2(sin(angle), -cos(angle)) * currentSpeed;
       gameRef.gameState.resetCombo();
       gameRef.playSfx('paddle_hit.wav');
+      
+      // Impact juice
+      other.impact();
       
     } else if (other is Brick) {
       if (!isFireball) {
@@ -121,6 +152,8 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
         }
       }
       
+      // Speed up!
+      speedMultiplier += 0.02;
       other.hit();
     }
   }

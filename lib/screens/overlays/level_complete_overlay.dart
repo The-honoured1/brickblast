@@ -183,10 +183,6 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay>
   }
 
   void _nextLevel() {
-    widget.game.gameState.nextLevel();
-    widget.game.overlays.remove('LevelCompleteOverlay');
-    widget.game.overlays.add('HudOverlay');
-    widget.game.loadLevel(widget.game.gameState.currentLevel);
-    widget.game.resumeEngine();
+    widget.game.resetLevel();
   }
 }
