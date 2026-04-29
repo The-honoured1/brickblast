@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import '../../game/block_blaster_game.dart';
-import '../../game/game_state.dart';
 
 class LevelCompleteOverlay extends StatefulWidget {
   final BlockBlasterGame game;
@@ -57,15 +55,20 @@ class _LevelCompleteOverlayState extends State<LevelCompleteOverlay>
     );
 
     // Sequence: stars → score count → button slide
-    _starsCtrl.forward().whenComplete(() {
-      _scoreCtrl.forward();
-      _scoreCtrl.addListener(() {
-        setState(() {
-          _displayedScore = (_scoreCtrl.value * _targetScore).toInt();
+    _starsCtrl.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _scoreCtrl.forward();
+        _scoreCtrl.addListener(() {
+          setState(() {
+            _displayedScore = (_scoreCtrl.value * _targetScore).toInt();
+          });
         });
-      });
-      _scoreCtrl.whenComplete(() => _slideCtrl.forward());
+        _scoreCtrl.addStatusListener((s2) {
+          if (s2 == AnimationStatus.completed) _slideCtrl.forward();
+        });
+      }
     });
+    _starsCtrl.forward();
   }
 
   @override

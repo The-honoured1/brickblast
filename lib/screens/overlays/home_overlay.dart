@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../game/block_blaster_game.dart';
+import '../../game/block_blaster_game.dart';
 
 class HomeOverlay extends StatefulWidget {
   final BlockBlasterGame game;

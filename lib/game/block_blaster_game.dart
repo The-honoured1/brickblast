@@ -1,16 +1,13 @@
 import 'package:flame/game.dart';
-import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/camera.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/components.dart';
-import 'dart:math';
 
 import 'components/paddle.dart';
 import 'components/ball.dart';
 import 'components/brick.dart';
 import 'game_state.dart';
-import '../models/level_data.dart';
 import '../models/brick_type.dart';
 
 class BlockBlasterGame extends FlameGame with HasCollisionDetection {

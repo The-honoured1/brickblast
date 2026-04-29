@@ -43,8 +43,6 @@ class Powerup extends PositionComponent
 
   @override
   void render(Canvas canvas) {
-    final isPositive = type.category == PowerupCategory.positive;
-
     // Draw pill shape
     final bgPaint = Paint()..color = type.color;
     final rrect = RRect.fromRectAndRadius(size.toRect(), const Radius.circular(6));
