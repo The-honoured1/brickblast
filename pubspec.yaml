@@ -37,6 +37,7 @@ dependencies:
   flame: ^1.16.0
   flame_audio: ^2.1.8
   provider: ^6.1.2
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
