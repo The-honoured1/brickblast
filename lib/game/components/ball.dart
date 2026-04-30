@@ -30,6 +30,8 @@ class Ball extends CircleComponent with HasGameRef<BlockBlasterGame>, CollisionC
     return s;
   }
 
+  double get speed => currentSpeed;
+
   @override
   Future<void> onLoad() async {
     super.onLoad();

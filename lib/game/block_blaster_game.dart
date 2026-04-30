@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flame/camera.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/components.dart';
+import 'package:flame/particles.dart';
 import 'package:flame/parallax.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'dart:math' as math;
