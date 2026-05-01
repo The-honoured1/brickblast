@@ -53,12 +53,15 @@ class _GameOverOverlayState extends State<GameOverOverlay>
             ),
             // Content
             SafeArea(
-              child: Center(
-                child: Opacity(
-                  opacity: _crackCtrl.value,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                child: Center(
+                  child: Opacity(
+                    opacity: _crackCtrl.value,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
                       Text(
                         'GAME OVER',
                         style: GoogleFonts.rajdhani(

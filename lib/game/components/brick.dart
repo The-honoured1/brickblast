@@ -67,6 +67,10 @@ class Brick extends PositionComponent with HasGameRef<BlockBlasterGame> {
       ..color = const Color(0xFF000000)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
+    _crackPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
 
     _rrect = RRect.fromRectAndRadius(size.toRect(), const Radius.circular(6));
     _depthRRect = RRect.fromRectAndRadius(
